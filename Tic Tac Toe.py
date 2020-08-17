@@ -37,8 +37,8 @@ def win_check(board,mark): #Checks for Tic-Tac-Toe Wins
     (board[7] == mark and board[5] == mark and board[3] == mark) or # diagonal
     (board[9] == mark and board[5] == mark and board[1] == mark)) # diagonal
 
-def place_marker(board, marker, position): #Marker position
-    board[position] = marker
+def place_marker(board, marker, move): #Marker position
+    board[move] = marker
 
 def full_board_check(board): # Checks to see if board is full
     for i in range(1,10):
@@ -46,8 +46,8 @@ def full_board_check(board): # Checks to see if board is full
             return False
     return True
 
-def space_check(board, position): # Checks if space is availble
-    return board[position] == ' '
+def space_check(board, move): # Checks if space is availble
+    return board[move] == ' '
 
 def players(): # Allowing players to select X or O
     character = ''
@@ -65,26 +65,30 @@ def players(): # Allowing players to select X or O
 def player_order(): # Randomly selects CPU or player to go first
     if random.randint(0,1) == 0:
         print('The computer will go first.\n')
-        return 'Player 2'
+        return 'CPU'
     else:
         print('You will go first.\n')
         return 'Player 1'
 
+def player_move(board): # Player move function
+    move = ''
+    while move not in '1 2 3 4 5 6 7 8 9'.split() or not space_check(board, int(move)):
+        move = input("Select a number between 1 - 9: ")
+    return int(move)
 
-def player_move(): # Player move function
-    move = input("Select a number between 1 - 9: ")
+def cpu_move(board): # CPU move function
+    print('CPU\'s turn.')
+    move = ''
+    while move not in '1 2 3 4 5 6 7 8 9'.split() or not space_check(board, int(move)):
+        move = str(random.randint(0,8))
+    return int(move)
 
 
-def cpu_move(): # CPU move function
-    random.randint(0,10)
-    if player_order() == player
-
-
-# Gameplay Code #
-
+# Gameplay Code
+gameBoard = [' '] * 10
 begin_game = ''
 while begin_game not in ('Y','N'):
-    begin_game = input("Do you want to play? Y/N \n")
+    begin_game = input("Do you want to play? Y/N\n")
     begin_game = begin_game.upper()
     if begin_game not in ('Y','N'):
         print("Invalid Selection\n")
@@ -92,4 +96,43 @@ while begin_game not in ('Y','N'):
         pass
 print('\n Welcome!\n')
 
-display_board()
+player_marker, cpu_marker = players()
+whoseTurn = player_order()
+gameOn = True
+
+# Start gameplay:
+while gameOn:
+   if whoseTurn == 'Player 1':
+       # Player's turn:
+       display_board(gameBoard)
+       move = player_move(gameBoard)
+       place_marker(gameBoard, player_marker, move)
+
+       if win_check(gameBoard, player_marker):
+           display_board(gameBoard)
+           print('Congratulations! You have won the game!')
+           gameOn = False
+       else:
+            if full_board_check(gameBoard):
+                display_board(gameBoard)
+                print('The game is a draw!')
+                break
+            else:
+                whoseTurn = 'CPU'
+   else:
+       # CPU's turn.
+       display_board(gameBoard)
+       move = cpu_move(gameBoard)
+       place_marker(gameBoard, cpu_marker, move)
+
+       if win_check(gameBoard, cpu_marker):
+           display_board(gameBoard)
+           print('The CPU has won!')
+           gameOn = False
+       else:
+           if full_board_check(gameBoard):
+               display_board(gameBoard)
+               print('The game is a tie!')
+               break
+           else:
+               whoseTurn = 'Player 1'
